@@ -1,4 +1,4 @@
-![morphaeus_logo](https://github.com/ci-ber/MorphAEus/assets/106509806/107b2aff-be67-4d4b-801d-015b1c3a884e)
+![morphaeus_logo](https://github.com/ci-ber/MorphAEus/assets/106509806/107b2aff-be67-4d4b-801d-015b1c3a884e width="200" height="200")
 
 <h1 align="center">
   <br>
