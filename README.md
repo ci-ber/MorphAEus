@@ -16,8 +16,9 @@ What Do AEs Learn? Challenging Common Assumptions in Unsupervised Anomaly Detect
 <h4 align="center">MICCAI 2023</h4>
 <h4 align="center"><a href="https://ci.bercea.net/project/morphaeus/">Project Website</a> • <a href="https://arxiv.org/pdf/2206.03698.pdf">Preprint</a> </h4>
 
-![morphaeus_overview](https://github.com/ci-ber/MorphAEus/assets/106509806/9265fb3b-6d69-4f8b-ad73-4ff65f2a1813)
-
+<p align="center">
+<img src="https://github.com/ci-ber/MorphAEus/assets/106509806/9265fb3b-6d69-4f8b-ad73-4ff65f2a1813">
+</p>
 
 ## Citation
 
