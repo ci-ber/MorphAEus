@@ -45,7 +45,7 @@ The code is based on the deep learning framework from the Institute of Machine L
 <img src="https://github.com/ci-ber/MorphAEus/assets/106509806/b6b904d1-c7f2-4af6-8a93-8cf3e70d9b8f">
 </p>
 
-#### Set up wandb (https://docs.wandb.ai/quickstart)
+#### 1). Set up wandb (https://docs.wandb.ai/quickstart)
 
 Sign up for a free account and login to your wandb account.
 ```bash
@@ -53,35 +53,51 @@ wandb login
 ```
 Paste the API key from https://wandb.ai/authorize when prompted.
 
-#### Clone repository
+#### 2). Clone repository
 
 ```bash
 git clone https://github.com/ci-ber/MorphAEus.git
 cd MorphAEus
 ```
 
-#### Install requirements
 
-```bash
-pip install -r requirements.txt
+#### 3). Create a virtual environment with the needed packages (use conda_environment-osx.yaml for macOS)
+
+```
+cd ${TARGET_DIR}/paper_1367
+conda env create -f conda_environment.yaml
+source activate py308 *or* conda activate py308
 ```
 
-#### Download datasets 
+#### 4). Install PyTorch 
 
-<h4 align="center"><a href="https://www.rsna.org/education/ai-resources-and-training/ai-image-challenge/rsna-pneumonia-detection-challenge-2018">RSNA</a> • <a href="https://bimcv.cipf.es/bimcv-projects/padchest/">PadChest</a> </h4>
+* *with cuda*: 
+```
+pip3 install torch==1.9.1+cu111 torchvision==0.10.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+```
+* *w/o cuda*:
+```
+pip3 install torch==1.9.1 torchvision==0.10.1 -f https://download.pytorch.org/whl/torch_stable.html
+```
+#### 5). Download datasets 
 
-> *Alternatively you can use your own chest X-Ray images with our <a href=""> pre-trained weights</a> or train from scratch on other anatomies and modalities.*
+<h4 align="center"><a href="https://www.rsna.org/education/ai-resources-and-training/ai-image-challenge/rsna-pneumonia-detection-challenge-2018">RSNA</a> • <a href="https://bimcv.cipf.es/bimcv-projects/padchest/">PadChest</a> • <a href="https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database">Kaggle</a> </h4> 
 
+> *Alternatively you can use your own chest X-Ray images with our pre-trained weights (weights/MorphAEus) or train from scratch on other anatomies and modalities.*
 
-#### Run the pipeline
+> Move the datasets to the expected paths (listed in the data/splits csv files)
 
-Run the main script with the corresponding config like this:
+#### 6). Run the pipeline
+5). Run a script: 
+* [Optional] set config 'task' to test and load model from ./weights/MorphAEus/best_model.pt * 
 
-```bash
-python core/Main.py --config_path ./projects/morphaeus/morphaeus.yaml
+```
+python core/Main.py --config_path projects/23_morphaeus/configs/cxr/morphaeus.yaml
 ```
 
-Refer to morphaeus.yaml for the default configuration. Store the pre-trained model from <a href=""> HERE</a> into the specified directory to skip the training part.
+Refer to *.yaml files for experiment configurations.
+
+# That's it, enjoy! :rocket:
 
 
 
