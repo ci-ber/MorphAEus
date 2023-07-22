@@ -64,7 +64,7 @@ cd MorphAEus
 #### 3). Create a virtual environment with the needed packages (use conda_environment-osx.yaml for macOS)
 
 ```
-cd ${TARGET_DIR}/paper_1367
+cd ${TARGET_DIR}/MorphAEus
 conda env create -f conda_environment.yaml
 source activate py308 *or* conda activate py308
 ```
