@@ -1,0 +1,147 @@
+### Auto-encoders with different depths as in Figure 2.
+name: AE-x
+target_size: &target_size !!python/tuple [64, 64]
+dbatch_size: &dbatch_size 1
+checkpoint_path: &checkpoint_path ./weights/23_morphaeus/cor/
+#
+# Experiment
+#
+experiment:
+  name: 23_MorphAEus(CoR)
+  task: train # change task to 'test' for evaluation only
+  weights: #'./weights/23_morphaeus/cor/ae5/best_model.pt' # uncomment for loading weights
+#
+device: gpu
+configurator:
+  module_name: core.Configurator
+  class_name: DLConfigurator
+  params:
+#
+# Model
+#
+model:
+  module_name: model_zoo.convolutional_autoencoders
+  class_name: ConvAutoEncoder
+  params:
+    in_channels: 1
+    channels:
+      - 16 # AE1
+      - 32 # AE2
+      - 64 # AE3
+#      - 128 # AE4 uncomment for next level
+#      - 256 # AE5
+#      - 256 # AE5
+    strides:
+      - 2 # AE1
+      - 2 # AE2
+      - 2 # AE3
+#      - 2 # AE4 uncomment for next level
+#      - 2 # AE5
+#      - 2 # AE6
+    out_ch: 1
+    kernel_size: 3
+    norm: batch
+    act: swish
+    deconv_mode: stride
+#
+# Trainer
+#
+trainer:
+  module_name: projects.23_morphaeus.Trainer
+  class_name: PTrainer
+  params:
+    input_size: *target_size
+    checkpoint_path: *checkpoint_path
+    nr_epochs: 1000
+    loss:
+      module_name: optim.losses.ln_losses
+      class_name: L2
+      params:
+    alfa: 0.0 # percepual loss weight
+    # Optimizer
+    optimizer_params:
+      lr: 5.0e-4
+  # Data Loader
+  data_loader:
+## MedNIST
+    module_name: core.DataLoader
+    class_name: DefaultDataLoader
+    params:
+      args:
+        dataset_module:
+          module_name: data.mednist_loader
+          class_name: MedNISTDataset
+        data_dir:
+          train:
+          - './data/MedNIST/splits/cxr_train.csv'
+          val:
+          - './data/MedNIST/splits/cxr_val.csv'
+          test:
+          - './data/MedNIST/splits/cxr_test.csv'
+        target_size: *target_size
+        batch_size: 64
+# Downstream tasks
+downstream_tasks:
+  mednist:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: False
+    data_loader:
+      module_name: core.DataLoader
+      class_name: DefaultDataLoader
+      params:
+        args:
+          target_size: *target_size
+          batch_size: *dbatch_size
+          dataset_module:
+            module_name: data.loaders.mednist_loader
+            class_name: MedNISTDataset
+      datasets:
+        CXR:
+          data_dir:
+            test:
+              - './data/MedNIST/splits/cxr_test.csv'
+        MNIST:
+          data_dir:
+            test:
+              - './data/MNIST_1000Test/mnist1000_test.csv'
+#        CCT:
+#          data_dir:
+#            test:
+#              - './data/MedNIST/cct_test.csv'
+#        AbdomenCT:
+#          data_dir:
+#            test:
+#              - './data/MedNIST/abdomen_test.csv'
+#        HeadCT:
+#          data_dir:
+#            test:
+#              - './data/MedNIST/head_test.csv'
+#        Hand:
+#          data_dir:
+#            test:
+#              - './data/MedNIST/hand_test.csv'
+#        BreastMRI:
+#          data_dir:
+#            test:
+#              - './data/MedNIST/breast_test.csv'
+
+  celeba:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: False
+    data_loader:
+      module_name: data.loaders.celeba_loader
+      class_name: CelebA
+      params:
+        args:
+          target_size: *target_size
+          batch_size: *dbatch_size
+      datasets:
+        celeba:
+          classes:
+            - 'celeba'

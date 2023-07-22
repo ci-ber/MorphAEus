@@ -1,0 +1,150 @@
+name: AE-S
+target_size: &target_size !!python/tuple [128, 128]
+dbatch_size: &dbatch_size 1
+checkpoint_path: &checkpoint_path ./weights/23_morphaeus/teaser/
+#
+# Experiment
+#
+experiment:
+  name: 23_MorphAEus_Teaser
+  task: train
+  weights:  #'./weights/23_morphaeus/cxr/AE-S/best_model.pt'
+#
+device: gpu
+configurator:
+  module_name: core.Configurator
+  class_name: DLConfigurator
+  params:
+#
+# Model
+#
+model:
+  module_name: model_zoo.convolutional_autoencoders
+  class_name: ConvAutoEncoder
+  params:
+    in_channels: 1
+    channels:
+      - 32 # for 128x128 input
+      - 64
+      - 128
+    strides:
+      - 2 # for 128x128 input
+      - 2
+      - 2
+      - 2
+    out_ch: 1
+    kernel_size: 5
+    norm: batch
+    act: leakyrelu
+    deconv_mode: trans
+#
+# Trainer
+#
+trainer:
+  module_name: projects.23_morphaeus.Trainer
+  class_name: PTrainer
+  params:
+    input_size: *target_size
+    checkpoint_path: *checkpoint_path
+    nr_epochs: 1000
+    # Loss
+    loss:
+      module_name: optim.losses.ln_losses
+      class_name: L1
+      params:
+    # Optimizer
+    optimizer_params:
+#      lr: 1.0e-4 # Orig
+      lr: 5.0e-4
+  # Data Loader
+  data_loader:
+# CXR
+    module_name: core.DataLoader
+    class_name: DefaultDataLoader
+    params:
+      args:
+        data_dir:
+          train:
+            - './data/CXR/splits/cxr_normal_train.csv'
+          val:
+            - './data/CXR/splits/cxr_normal_val.csv'
+          test:
+            - './data/CXR/splits/cxr_normal_test.csv'
+        target_size: *target_size
+        #        batch_size: 128 # orig
+        batch_size: 64
+# Downstream tasks
+downstream_tasks:
+  mednist:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: False
+    data_loader:
+      module_name: core.DataLoader
+      class_name: DefaultDataLoader
+      params:
+        args:
+          target_size: *target_size
+          batch_size: *dbatch_size
+          dataset_module:
+            module_name: data.loaders.mednist_loader
+            class_name: MedNISTDataset
+      datasets:
+        Normal_CXR:
+          data_dir:
+            test:
+              - './data/MedNIST/splits/cxr_test.csv'
+        HeadCT:
+          data_dir:
+            test:
+              - './data/MedNIST/splits/head_test.csv'
+        Hand:
+          data_dir:
+            test:
+              - './data/MedNIST/splits/hand_test.csv'
+        MNIST:
+          data_dir:
+            test:
+              - './data/MNIST_1000Test/mnist1000_test.csv'
+  cifar10:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: False
+    data_loader:
+      module_name: data.loaders.cifar10_loader
+      class_name: Cifar10Loader
+      params:
+        args:
+          target_size: *target_size
+          batch_size: 8
+      datasets:
+        Normal_dog:
+          classes:
+            - 'dog'
+        car:
+          classes:
+            - 'car'
+        truck:
+          classes:
+            - 'truck'
+  celeba:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: False
+    data_loader:
+      module_name: data.loaders.celeba_loader
+      class_name: CelebA
+      params:
+        args:
+          target_size: *target_size
+          batch_size: *dbatch_size
+      datasets:
+        Normal_celebs:
+          classes:
+            - 'celeba'

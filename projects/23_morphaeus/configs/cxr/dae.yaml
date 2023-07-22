@@ -1,0 +1,124 @@
+name: DAE
+target_size: &target_size !!python/tuple [128, 128]
+dbatch_size: &dbatch_size 1
+checkpoint_path: &checkpoint_path ./weights/23_morphaeus/cxr/
+#
+# Experiment
+#
+experiment:
+  name: 23_MorphAEus
+  task: train
+  weights:  #'./weights/23_morphaeus/cxr/dae/best_model.pt'
+#
+device: gpu
+configurator:
+  module_name: core.Configurator
+  class_name: DLConfigurator
+  params:
+#
+# Model
+#
+model:
+  module_name: model_zoo.dae_kascenas
+  class_name: UNet
+  params:
+    in_channels: 1
+    n_classes: 1
+    norm: "group"
+    up_mode: "upconv"
+    depth: 4 # 4 for 128 x 128
+    wf: 6 # 6 for 128x128
+    padding: True
+#
+# Trainer
+#
+trainer:
+  module_name: projects.23_morphaeus.Trainer
+  class_name: PTrainer
+  params:
+    input_size: *target_size
+    checkpoint_path: *checkpoint_path
+    nr_epochs: 1000
+    # Transformer
+    transformer:
+      module_name: transforms.gaussian_noise
+      class_name: GaussianNoise
+      params:
+        noise_std: 0.2
+        noise_res: 16
+    loss:
+      module_name: optim.losses.ln_losses
+      class_name: L1
+      params:
+    lr_scheduler: 'cosine'
+    # Optimizer
+    optimizer_params:
+      lr: 1.0e-4 # 1.0e-4 # orig
+  # Data Loader
+  data_loader:
+    module_name: core.DataLoader
+    class_name: DefaultDataLoader
+    params:
+      args:
+        data_dir:
+          train:
+            - './data/CXR/splits/cxr_normal_train.csv'
+          val:
+            - './data/CXR/splits/cxr_normal_val.csv'
+          test:
+            - './data/CXR/splits/cxr_normal_test.csv'
+        target_size: *target_size
+        batch_size: 16 # 16 # orig
+#
+# Downstream tasks
+downstream_tasks:
+  pneumonia:
+    module_name: projects.23_morphaeus.DownstreamEvaluator
+    class_name: PDownstreamEvaluator
+    checkpoint_path: *checkpoint_path
+    compute_fid: False
+    compute_scores: True
+    data_loader:
+      module_name: core.DataLoader
+      class_name: DefaultDataLoader
+      params:
+        args:
+          dataset_module:
+            module_name: data.cxr_loader
+            class_name: CXRDataset
+          target_size: *target_size
+          batch_size: *dbatch_size
+      datasets:
+        Normal_RSNA:
+          data_dir:
+            test:
+              - './data/CXR/splits/cxr_normal_test.csv'
+        Pneumonia:
+          data_dir:
+            test:
+              - './data/CXR/splits/cxr_opa_test.csv'
+#  covid:
+#    module_name: projects.23_morphaeus.DownstreamEvaluator
+#    class_name: PDownstreamEvaluator
+#    checkpoint_path: *checkpoint_path
+#    compute_fid: False
+#    compute_scores: True
+#    data_loader:
+#      module_name: core.DataLoader
+#      class_name: DefaultDataLoader
+#      params:
+#        args:
+#          dataset_module:
+#            module_name: data.cxr_loader
+#            class_name: CXRDataset
+#          target_size: *target_size
+#          batch_size: *dbatch_size
+#      datasets:
+#        Normal_Padchest:
+#          data_dir:
+#            test:
+#              - './data/padchest/splits/cxr_normal_test.csv'
+#        Covid:
+#          data_dir:
+#            test:
+#              - './data/CXR/splits/cxr_covid_padchest_test.csv'
