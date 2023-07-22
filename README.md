@@ -69,7 +69,9 @@ conda env create -f conda_environment.yaml
 source activate py308 *or* conda activate py308
 ```
 
-#### 4). Install PyTorch 
+#### 4). Install PyTorch
+
+> Example installation:
 
 * *with cuda*: 
 ```
