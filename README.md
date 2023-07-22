@@ -89,13 +89,13 @@ pip3 install torch==1.9.1 torchvision==0.10.1 -f https://download.pytorch.org/wh
 
 #### 6). Run the pipeline
 
-* [Optional] set config 'task' to test and load model from ./weights/MorphAEus/best_model.pt * 
+> [Optional] set config 'task' to test and load model from ./weights/MorphAEus/best_model.pt
 
 ```
 python core/Main.py --config_path projects/23_morphaeus/configs/cxr/morphaeus.yaml
 ```
 
-Refer to *.yaml files for experiment configurations.
+> Refer to *.yaml files for experiment configurations.
 
 # That's it, enjoy! :rocket:
 
