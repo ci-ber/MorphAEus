@@ -59,7 +59,7 @@ Paste the API key from https://wandb.ai/authorize when prompted.
 
 ```bash
 git clone https://github.com/ci-ber/MorphAEus.git
-cd autoDDPM
+cd MorphAEus
 ```
 
 #### Install requirements
