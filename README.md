@@ -88,7 +88,7 @@ pip3 install torch==1.9.1 torchvision==0.10.1 -f https://download.pytorch.org/wh
 > Move the datasets to the expected paths (listed in the data/splits csv files)
 
 #### 6). Run the pipeline
-5). Run a script: 
+
 * [Optional] set config 'task' to test and load model from ./weights/MorphAEus/best_model.pt * 
 
 ```
