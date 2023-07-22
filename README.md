@@ -1,3 +1,5 @@
+The code will be available soon...
+
 <p align="center">
 <img src="https://github.com/ci-ber/MorphAEus/assets/106509806/107b2aff-be67-4d4b-801d-015b1c3a884e" width="200" class="center">
 </p>
@@ -39,6 +41,12 @@ If you find our work useful, please cite our paper:
 
 The code is based on the deep learning framework from the Institute of Machine Learning in Biomedical Imaging: https://github.com/compai-lab/iml-dl
 
+### Framework Overview: 
+
+<p align="center">
+<img src="https://github.com/ci-ber/MorphAEus/assets/106509806/b6b904d1-c7f2-4af6-8a93-8cf3e70d9b8f">
+</p>
+
 #### Set up wandb (https://docs.wandb.ai/quickstart)
 
 Sign up for a free account and login to your wandb account.
@@ -51,7 +59,7 @@ Paste the API key from https://wandb.ai/authorize when prompted.
 
 ```bash
 git clone https://github.com/ci-ber/MorphAEus.git
-cd autoDDPM
+cd MorphAEus
 ```
 
 #### Install requirements
